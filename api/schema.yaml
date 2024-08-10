@@ -1,0 +1,116 @@
+openapi: 3.0.2
+info:
+  title: I Love Music API
+  version: 1.0.0
+servers:
+- url: http://localhost:3333/v1
+
+components:
+  securitySchemes:
+    basicScheme:
+      type: apiKey
+      description: Basic authentication
+      name: authorization
+      in: header
+  schemas:
+    Error:
+      description: An API Error response
+      type: object
+      properties:
+        message:
+          type: string
+          description: A printable message for this error
+    User:
+      description: User public profile
+      type: object
+      properties:
+        id:
+          type: string
+          description: User unique identifier
+        username:
+          type: string
+          description: User username
+    Score:
+      description: Score of a user
+      type: object
+      properties:
+        id:
+          type: string
+          description: Score unique identifier
+        title:
+          type: string
+          description: Title of the score
+        creationDate:
+          type: string
+          format: date-time
+          description: Date when the score was created
+        privacy:
+          type: string
+          description: Privacy of the score
+          enum: [public, private]
+
+paths:
+  /:
+    get:
+      summary: Frontend
+      operationId: getIndex
+      x-security-required: false
+      responses:
+        '200':
+          description: Home Page
+          content:
+            text/html:
+              schema:
+                type: string
+  /me:
+    get:
+      summary: Return the connect user profile
+      operationId: getMe
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - basicScheme: []
+  /users/{username}:
+    parameters:
+    - name: username
+      in: path
+      description: Profile username
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Return a public profile
+      operationId: getUserProfile
+      responses:
+        200:
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - basicScheme: []
+      x-security-required: false

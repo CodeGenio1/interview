@@ -1,0 +1,10 @@
+image:
+  file: .gitpod.dockerfile
+
+tasks:
+  - name: Install
+    init: pnpm install
+  - name: MongoDB
+    command: |
+      mkdir -p /workspace/mongodb && mongod --dbpath /workspace/mongodb
+
