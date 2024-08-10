@@ -1,0 +1,88 @@
+.score-wrapper {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 19px;
+}
+
+.score-wrapper .score {
+	width: 200px;
+	min-height: 100px;
+	box-shadow: 0 0 4px 1px #dadada;
+	padding: 15px;
+	border-radius: 8px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.score-wrapper .score h1 {
+	font-size: 17px;
+	margin: 0;
+	font-weight: normal;
+}
+
+.score-footer {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 20px;
+}
+
+.like-cout {
+	background: #f3fcf3;
+	border-radius: 5px;
+	font-size: 11px;
+	width: 25px;
+	height: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-weight: bold;
+	color: #5a9d5a;
+	border: 1px solid #cde6cd;
+}
+
+.star-box {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.star-box .text {
+	font-size: 13px;
+}
+
+.star-box .star {
+	font-size: 12px;
+	padding-right: 10px;
+}
+
+.like-status {
+	cursor: pointer;
+	border: 1px solid #eee;
+	border-radius: 5px;
+	padding: 0 5px;
+}
+
+.like-status:hover {
+	background: #eee;
+	border-radius: 5px;
+}
+
+.private-score {
+	background: #009fff;
+	color: #fff;
+	border-radius: 5px;
+	padding: 2px 10px;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+@media screen and (max-width: 420px) {
+	.score-wrapper .score {
+		width: calc(100% - 30px);
+		margin: auto;
+	}
+}

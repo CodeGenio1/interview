@@ -40,8 +40,35 @@ export const getIndex = async (req: Request, res: any) => {
   // Calculate the number of records to skip
   const skip = (page - 1) * perPage;
 
+  const scores = await ScoreModel.aggregate([
+    {
+      $lookup: {
+        from: 'scoreuserlikes', // The collection name in MongoDB
+        localField: '_id',
+        foreignField: 'scoreId',
+        as: 'likes'
+      }
+    },
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' } // Count the number of likes
+      }
+    },
+    {
+      $project: {
+        likes: 0 // Optionally exclude the likes array from the output
+      }
+    },
+    {
+      $skip: skip
+    },
+    {
+      $limit: perPage
+    }
+  ]);
+
   // Query the database with pagination
-  const scores = await ScoreModel.find({})
+  const scoresOld = await ScoreModel.find({})
     .skip(skip)
     .limit(perPage)
     .exec();
