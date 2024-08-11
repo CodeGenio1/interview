@@ -1,14 +1,17 @@
+body {
+	margin-bottom: 150px;
+}
 .score-wrapper {
 	width: 100%;
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-start;
 	flex-wrap: wrap;
-	gap: 19px;
+	gap: 20px;
 }
 
 .score-wrapper .score {
-	width: 200px;
-	min-height: 100px;
+	width: 240px;
+	min-height: 120px;
 	box-shadow: 0 0 4px 1px #dadada;
 	padding: 10px;
 	border-radius: 8px;

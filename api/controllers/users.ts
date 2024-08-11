@@ -26,8 +26,6 @@ export const getUserProfile = jsonWrap(async (req: Request) => {
 });
 
 export const getIndex = async (req: Request, res: any) => {
-  // login a user statically
-
 
   // Get page and perPage from query parameters, with default values
   let page = parseInt(req.query.page as string, 10) || 1; // Default to page 1 if not provided
@@ -53,9 +51,11 @@ export const getIndex = async (req: Request, res: any) => {
 
   const scores = await ScoreModel.aggregate([
     // Match stage to filter documents if needed
-    { $match: {
-      privacy: 'public'
-    } },
+    {
+      $match: {
+        privacy: 'public'
+      }
+    },
 
     // Lookup stage 1: Total Likes
     {
@@ -183,4 +183,78 @@ export const unlikeScore = async (req: Request, res: any) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+export const getLeaderboard = async (req: Request, res: any) => {
+  
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  // Aggregation query
+  const scores = await ScoreModel.aggregate([
+    // Match stage to filter documents if needed
+    {
+      $match: {
+        privacy: 'public'
+      }
+    },
+
+    // Lookup to join with ScoreUserLike collection
+    {
+      $lookup: {
+        from: 'scoreuserlikes', // The collection that stores the likes
+        localField: '_id',       // Field in the ScoreModel
+        foreignField: 'scoreId', // Field in the ScoreUserLikeModel
+        as: 'likes'
+      }
+    },
+
+    // Match likes created in the last week
+    {
+      $addFields: {
+        likes: {
+          $filter: {
+            input: '$likes',
+            as: 'like',
+            cond: { $gte: ['$$like.createdAt', oneWeekAgo] }
+          }
+        }
+      }
+    },
+
+    // Add a field to count the number of likes
+    {
+      $addFields: {
+        totalLikes: { $size: '$likes' }
+      }
+    },
+
+    {
+      $match: { totalLikes: { $gt: 0 } }
+    },
+
+    // Sort by the total number of likes in descending order
+    {
+      $sort: { totalLikes: -1 }
+    },
+
+    // Limit the results to the top 20 scores
+    {
+      $limit: 20
+    },
+
+    // Project the fields
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        totalLikes: 1,
+        privacy: 1
+      }
+    }
+  ]).exec();
+
+  console.log(scores);
+
+  res.render('leaderboard', { scores });
+}
 
