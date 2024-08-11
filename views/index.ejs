@@ -45,12 +45,21 @@
 						<% if (score.privacy == 'public') { %>
 						<div class="like-cout"><%= score.totalLikes %></div>
 						<div class="like-status">
+							<% if (score.userHasLiked == false) { %>
 							<div class="star-box" onclick="likeScore('<%= score._id %>')">
 								<div class="star">
 									<i class="fa-regular fa-star"></i>
 								</div>
 								<div class="text">Like</div>
 							</div>
+							<% } else { %>
+								<div class="star-box" onclick="unlikeScore('<%= score._id %>')">
+									<div class="star">
+										<i class="fa-solid fa-star"></i>
+									</div>
+									<div class="text">Liked</div>
+								</div>
+							<% } %>
 						</div>
 						<%} else { %>
 						<div class="private-score">Private</div>
@@ -76,6 +85,10 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 		<script>
+			// Global Variables
+			const userId = "66b78c0f1c55a015667308b8"
+			const username = "cheap_fuchsia_reptile"
+
 			function goToPage(pageNo) {
 				// Get the current URL
 				const url = new URL(window.location.href)
@@ -87,14 +100,12 @@
 				window.location.href = url.toString()
 			}
 
-			function likeScore(scoreId) {
-				const userId = "66b78c0f1c55a015667308b8"
-				const username = "cheap_fuchsia_reptile"
+			function likeAndUnlikeScore(scoreId, status) {
 				const authHeader = 'Basic ' + btoa(username + ':' + username);
 
 				axios
 					.post(
-						"/v1/like-score",
+						`/v1/${status}-score`,
 						{
 							userId,
 							scoreId,
@@ -107,11 +118,20 @@
 						}
 					)
 					.then((response) => {
+						window.location.reload()
 						console.log("Response:", response.data)
 					})
 					.catch((error) => {
 						console.error("Error adding like:", error, error.response ? error.response.data : error.message)
 					})
+			}
+
+			function likeScore(scoreId) {
+				likeAndUnlikeScore(scoreId, 'like')
+			}
+
+			function unlikeScore(scoreId) {
+				likeAndUnlikeScore(scoreId, 'unlike')
 			}
 		</script>
 	</body>

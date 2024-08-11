@@ -59,6 +59,10 @@
 	padding-right: 10px;
 }
 
+.star-box .star .fa-solid {
+	color: #eac54f;
+}
+
 .like-status {
 	cursor: pointer;
 	border: 1px solid #eee;

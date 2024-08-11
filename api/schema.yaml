@@ -20,6 +20,18 @@ components:
         message:
           type: string
           description: A printable message for this error
+    Success:
+      description: An API Success response
+      type: object
+      properties:
+        message:
+          type: string
+          description: A printable message
+        data: 
+          type: object
+          description: A data suppose to be returned to frontend
+      required:
+        [message]
     User:
       description: User public profile
       type: object
@@ -143,6 +155,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScoreUserLike'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - basicScheme: []
+  /unlike-score:
+    post:
+      summary: Unlike a score
+      operationId: unlikeScore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreUserLike'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
         default:
           description: Error
           content:
