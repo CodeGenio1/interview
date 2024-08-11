@@ -5,6 +5,14 @@
 
 
 export interface paths {
+  "/": {
+    /** Frontend */
+    get: operations["getIndex"];
+  };
+  "/leaderboard": {
+    /** Frontend */
+    get: operations["getLeaderboard"];
+  };
   "/me": {
     /** Return the connect user profile */
     get: operations["getMe"];
@@ -19,6 +27,14 @@ export interface paths {
       };
     };
   };
+  "/like-score": {
+    /** Like a score */
+    post: operations["likeScore"];
+  };
+  "/unlike-score": {
+    /** Unlike a score */
+    post: operations["unlikeScore"];
+  };
 }
 
 export type webhooks = Record<string, never>;
@@ -29,6 +45,13 @@ export interface components {
     Error: {
       /** @description A printable message for this error */
       message?: string;
+    };
+    /** @description An API Success response */
+    Success: {
+      /** @description A printable message */
+      message: string;
+      /** @description A data suppose to be returned to frontend */
+      data?: Record<string, never>;
     };
     /** @description User public profile */
     User: {
@@ -54,6 +77,17 @@ export interface components {
        */
       privacy?: "public" | "private";
     };
+    /** @description Likes of Users to Scores */
+    ScoreUserLike: {
+      /** @description Unique identifier */
+      id?: string;
+      /** @description ID of User who liked the score */
+      userId?: string;
+      /** @description ID of Score that is being liked by user */
+      scoreId?: string;
+      /** @description Date when user has liked the score */
+      createdAt?: Record<string, never>;
+    };
   };
   responses: never;
   parameters: never;
@@ -68,6 +102,28 @@ export type external = Record<string, never>;
 
 export interface operations {
 
+  /** Frontend */
+  getIndex: {
+    responses: {
+      /** @description Home Page */
+      200: {
+        content: {
+          "text/html": string;
+        };
+      };
+    };
+  };
+  /** Frontend */
+  getLeaderboard: {
+    responses: {
+      /** @description Home Page */
+      200: {
+        content: {
+          "text/html": string;
+        };
+      };
+    };
+  };
   /** Return the connect user profile */
   getMe: {
     responses: {
@@ -104,6 +160,50 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["Error"];
+        };
+      };
+      /** @description Error */
+      default: {
+        content: {
+          "application/json": components["schemas"]["Error"];
+        };
+      };
+    };
+  };
+  /** Like a score */
+  likeScore: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ScoreUserLike"];
+      };
+    };
+    responses: {
+      /** @description Add Like */
+      200: {
+        content: {
+          "application/json": components["schemas"]["ScoreUserLike"];
+        };
+      };
+      /** @description Error */
+      default: {
+        content: {
+          "application/json": components["schemas"]["Error"];
+        };
+      };
+    };
+  };
+  /** Unlike a score */
+  unlikeScore: {
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ScoreUserLike"];
+      };
+    };
+    responses: {
+      /** @description Success */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Success"];
         };
       };
       /** @description Error */

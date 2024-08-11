@@ -73,6 +73,11 @@ components:
         scoreId:
           type: string
           description: ID of Score that is being liked by user
+        createdAt:
+          type: Date
+          description: Date when user has liked the score
+      required:
+        [id, userId, scoreId, createdAt]
 paths:
   /:
     get:

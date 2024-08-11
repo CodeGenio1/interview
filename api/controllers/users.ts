@@ -1,8 +1,9 @@
+import { paths, components } from './../schema.d';
 import { ScoreUserLikeModel } from './../../db/schemas/score-user-likes';
-import type { Request } from 'express';
+import type { Request, Response } from 'express';
 import { UserHydratedDocument, UserModel } from '../../db/schemas/user';
 import { ApiError } from '../errors/apiError';
-import { jsonWrap } from '../helpers/responses';
+import { apiResponse, jsonWrap } from '../helpers/responses';
 import { ScoreModel } from '../../db/schemas/score';
 import mongoose from 'mongoose';
 
@@ -117,13 +118,18 @@ export const getIndex = async (req: Request, res: any) => {
   res.render('index', { scores, page, perPage, totalPages });
 }
 
+
+// Extract Success & Error Types
+type LikeScoreSuccessResp = paths['/like-score']["post"]["responses"][200]["content"]["application/json"];
+type LikeScoreErrorResp = paths['/like-score']["post"]["responses"]['default']["content"]["application/json"];
+
 /**
  * Add a like by a user to a score
  * @route POST /like-score
  * @param {string} userId - ID of the user
  * @param {string} scoreId - ID of the score
  */
-export const likeScore = async (req: Request, res: any) => {
+export const likeScore = async (req: Request, res: Response<LikeScoreSuccessResp | LikeScoreErrorResp>) => {
   const { userId, scoreId } = req.body;
 
   if (!userId || !scoreId) {
@@ -138,20 +144,23 @@ export const likeScore = async (req: Request, res: any) => {
     }
 
     // Create a new like document
-    const newLike = new ScoreUserLikeModel({
+    const newLike = await new ScoreUserLikeModel({
       userId,
       scoreId
-    });
+    }).save()
 
-    await newLike.save();
-
-    res.status(200).json(newLike);
+    res.status(200).json(newLike.toJSON());
 
   } catch (error) {
     console.error('Error adding like:', error);
     res.status(500).json({ message: 'Server error' });
   }
-};
+}
+
+
+// Extract Success & Error Types
+type UnlikeScoreSuccessResp = paths['/unlike-score']["post"]["responses"][200]["content"]["application/json"];
+type UnlikeScoreErrorResp = paths['/unlike-score']["post"]["responses"]['default']["content"]["application/json"];
 
 /**
  * Delete a like by a user to a score
@@ -159,7 +168,7 @@ export const likeScore = async (req: Request, res: any) => {
  * @param {string} userId - ID of the user
  * @param {string} scoreId - ID of the score
  */
-export const unlikeScore = async (req: Request, res: any) => {
+export const unlikeScore = async (req: Request, res: Response<UnlikeScoreSuccessResp | UnlikeScoreErrorResp>) => {
   const { userId, scoreId } = req.body;
 
   if (!userId || !scoreId) {
@@ -184,6 +193,11 @@ export const unlikeScore = async (req: Request, res: any) => {
   }
 };
 
+/**
+ * Get the Leaderboard with top 20 scores
+ * @param req Request
+ * @param res Response
+ */
 export const getLeaderboard = async (req: Request, res: any) => {
   
   const oneWeekAgo = new Date();
