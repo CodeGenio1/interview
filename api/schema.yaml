@@ -48,7 +48,19 @@ components:
           type: string
           description: Privacy of the score
           enum: [public, private]
-
+    ScoreUserLike:
+      description: Likes of Users to Scores
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+        userId:
+          type: string
+          description: ID of User who liked the score
+        scoreId:
+          type: string
+          description: ID of Score that is being liked by user
 paths:
   /:
     get:
@@ -114,3 +126,28 @@ paths:
       security:
       - basicScheme: []
       x-security-required: false
+  /like-score:
+    post:
+      summary: Like a score
+      operationId: likeScore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScoreUserLike'
+      responses:
+        '200':
+          description: Add Like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreUserLike'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+      - basicScheme: []

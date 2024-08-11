@@ -1,3 +1,4 @@
+import { ScoreUserLikeModel } from './../../db/schemas/score-user-likes';
 import type { Request } from 'express';
 import { UserHydratedDocument, UserModel } from '../../db/schemas/user';
 import { ApiError } from '../errors/apiError';
@@ -43,7 +44,7 @@ export const getIndex = async (req: Request, res: any) => {
   const scores = await ScoreModel.aggregate([
     {
       $lookup: {
-        from: 'scoreuserlikes', // The collection name in MongoDB
+        from: 'ScoreUserLikeModel', // The collection name in MongoDB
         localField: '_id',
         foreignField: 'scoreId',
         as: 'likes'
@@ -67,12 +68,42 @@ export const getIndex = async (req: Request, res: any) => {
     }
   ]);
 
-  // Query the database with pagination
-  const scoresOld = await ScoreModel.find({})
-    .skip(skip)
-    .limit(perPage)
-    .exec();
-
-  // Render the results
   res.render('index', { scores, page, perPage, totalPages });
 }
+
+/**
+ * Add a like by a user to a score
+ * @route POST /likes
+ * @param {string} userId - ID of the user
+ * @param {string} scoreId - ID of the score
+ */
+export const likeScore = async (req: Request, res: any) => {
+  const { userId, scoreId } = req.body;
+
+  if (!userId || !scoreId) {
+    return res.status(400).json({ message: 'userId and scoreId are required' });
+  }
+
+  try {
+    // Check if the like already exists
+    const existingLike = await ScoreUserLikeModel.findOne({ userId, scoreId });
+    if (existingLike) {
+      return res.status(400).json({ message: 'User has already liked this score' });
+    }
+    console.log('here 2')
+    // Create a new like document
+    const newLike = new ScoreUserLikeModel({
+      userId,
+      scoreId
+    });
+
+    await newLike.save();
+
+    res.status(200).json(newLike);
+  
+  } catch (error) {
+    console.error('Error adding like:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+

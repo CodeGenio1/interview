@@ -15,4 +15,4 @@ const ScoreUserLike = new Schema({
 
 type IScoreUserLike = InferSchemaType<typeof ScoreUserLike>;
 
-export const ScoreModel = model<IScoreUserLike>('ScoreUserLike', ScoreUserLike);
+export const ScoreUserLikeModel = model<IScoreUserLike>('ScoreUserLike', ScoreUserLike);
