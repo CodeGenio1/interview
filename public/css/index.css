@@ -10,7 +10,7 @@
 	width: 200px;
 	min-height: 100px;
 	box-shadow: 0 0 4px 1px #dadada;
-	padding: 15px;
+	padding: 10px;
 	border-radius: 8px;
 
 	display: flex;
@@ -26,7 +26,7 @@
 
 .score-footer {
 	display: flex;
-	justify-content: space-between;
+	justify-content: flex-end;
 	margin-top: 20px;
 }
 
@@ -44,14 +44,15 @@
 	border: 1px solid #cde6cd;
 }
 
+.star-box .star .fa-solid {
+	color: #eac54f;
+}
+
 .star-box {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-}
-
-.star-box .text {
-	font-size: 13px;
+	padding: 3px 4px;
 }
 
 .star-box .star {
@@ -59,8 +60,21 @@
 	padding-right: 10px;
 }
 
-.star-box .star .fa-solid {
-	color: #eac54f;
+.star-box .text {
+	font-size: 13px;
+}
+
+.star-box .cout {
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eaeaea;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    border: 1px solid #ddd;
 }
 
 .like-status {

@@ -52,6 +52,11 @@ export const getIndex = async (req: Request, res: any) => {
   const skip = (page - 1) * perPage;
 
   const scores = await ScoreModel.aggregate([
+    // Match stage to filter documents if needed
+    { $match: {
+      privacy: 'public'
+    } },
+
     // Lookup stage 1: Total Likes
     {
       $lookup: {
